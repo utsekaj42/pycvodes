@@ -18,28 +18,40 @@
 #include <iostream>
 
 #include "sundials_cxx.hpp" // sundials_cxx::nvector_serial::Vector
-#include <cvodes/cvodes_spils.h>
-#if SUNDIALS_VERSION_MAJOR >= 3
-#include <cvodes/cvodes_direct.h> /* CVODE fcts., CV_BDF, CV_ADAMS */
-#include <sunmatrix/sunmatrix_dense.h>
-#include <sunmatrix/sunmatrix_band.h>
-#include <sunmatrix/sunmatrix_sparse.h>
-#include <sunlinsol/sunlinsol_lapackdense.h>
-#include <sunlinsol/sunlinsol_lapackband.h>
-#include <sunlinsol/sunlinsol_spgmr.h>
-#include <sunlinsol/sunlinsol_spbcgs.h>
-#include <sunlinsol/sunlinsol_sptfqmr.h>
-#else
-#include <cvodes/cvodes_spgmr.h>
-#include <cvodes/cvodes_spbcgs.h>
-#include <cvodes/cvodes_sptfqmr.h>
-#include <cvodes/cvodes_lapack.h>       /* prototype for CVDense */
-#define SUNTRUE TRUE
-#define SUNFALSE FALSE
-#endif
+
 #include <cvodes/cvodes.h> /* CVODE fcts., CV_BDF, CV_ADAMS */
 #include <cvodes/cvodes_impl.h> /* CVodeMem */
 #include <cvodes/cvodes_diag.h>       /* prototype for CVDiag */
+#include <cvodes/cvodes_spils.h>
+#include <sundials/sundials_config.h> // SUNDIALS_BLAS_LAPACK
+#if SUNDIALS_VERSION_MAJOR >= 3
+ #include <cvodes/cvodes_direct.h> /* CVODE fcts., CV_BDF, CV_ADAMS */
+ #include <sunmatrix/sunmatrix_dense.h>
+ #include <sunmatrix/sunmatrix_band.h>
+ #include <sunmatrix/sunmatrix_sparse.h>
+ #if defined(SUNDIALS_BLAS_LAPACK)
+  #include <sunlinsol/sunlinsol_lapackdense.h>
+  #include <sunlinsol/sunlinsol_lapackband.h>
+ #else
+  #include <sunlinsol/sunlinsol_dense.h>
+  #include <sunlinsol/sunlinsol_band.h>
+ #endif
+ #include <sunlinsol/sunlinsol_spgmr.h>
+ #include <sunlinsol/sunlinsol_spbcgs.h>
+ #include <sunlinsol/sunlinsol_sptfqmr.h>
+#else
+ #include <cvodes/cvodes_spgmr.h>
+ #include <cvodes/cvodes_spbcgs.h>
+ #include <cvodes/cvodes_sptfqmr.h>
+ #if defined(SUNDIALS_BLAS_LAPACK)
+  #include <cvodes/cvodes_lapack.h>
+ #else
+  #include <cvodes/cvodes_dense.h>
+  #include <cvodes/cvodes_band.h>
+ #endif
+ #define SUNTRUE TRUE
+ #define SUNFALSE FALSE
+#endif
 
 
 //pragma STDC FENV_ACCESS on  // GCC 5.4 does not seem to support the pragma
